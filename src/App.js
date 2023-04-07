@@ -29,6 +29,8 @@ function App() {
 	const [맞출각인레벨_4, 저장맞출각인레벨_4] = useState();
 	const [맞출각인레벨_5, 저장맞출각인레벨_5] = useState();
 
+	const [skillList, setSkillList] = useState();
+
 	const 맞출각인저장 = () => {
 		저장내가맞출각인([
 			{ 각인: 맞출각인_1, 레벨: Number(맞출각인레벨_1) },
@@ -68,11 +70,11 @@ function App() {
 	}
 
 	useEffect(() => {
-		console.log(내가맞출각인);
-		console.log(내각인);
-		console.log(필요각인레벨);
-	}, [필요각인레벨])
-
+		// console.log(내가맞출각인);
+		// console.log(내각인);
+		// console.log(필요각인레벨);
+		console.log(skillList);
+	}, [필요각인레벨, skillList])
 	const onChange = (e) => {
 		const name = e.target.name;
 		const value = e.target.value;
@@ -142,82 +144,134 @@ function App() {
 		}
 	}
 
-
 	useEffect(() => {
-		// const config = {
-		// 	headers: {
-		// 		'Accept': 'application/json',
-		// 		'Authorization': `bearer ${process.env.REACT_APP_LOSTARK_API_KEY}`,
-		// 		'Content-Type': 'application/json'
-		// 	}
-		// }
+		const config = {
+			headers: {
+				'Accept': 'application/json',
+				'Authorization': `bearer ${process.env.REACT_APP_LOSTARK_API_KEY}`,
+				'Content-Type': 'application/json'
+			}
+		}
 
-		// axios.get("https://developer-lostark.game.onstove.com/auctions/options", config).then((res) => {
-		// 	console.log(res);
-		// }).catch((err) => {
-		// 	console.log(err);
-		// })
+		axios.get("https://developer-lostark.game.onstove.com/auctions/options", config).then((res) => {
+			setSkillList(res.data.EtcOptions[1].EtcSubs);
+			res.data.EtcOptions[1].EtcSubs.forEach(el => {
+			});
+			console.log(res);
 
-		// const data = {
-		// 	"ItemLevelMin": 0, // 아이템 최소렙
-		// 	"ItemLevelMax": 0, // 아이템 최대렙
-		// 	"ItemGradeQuality": 90, // 아이템 품질
-		// 	"SkillOptions": [ //장비 트포
-		// 		{
-		// 			"FirstOption": null,
-		// 			"SecondOption": null,
-		// 			"MinValue": null,
-		// 			"MaxValue": null
-		// 		}
-		// 	],
-		// 	"EtcOptions": [ // 악세 스킬 및 특성
-		// 		{
-		// 			"FirstOption": 3, //각인 
-		// 			"SecondOption": 118, // 원한
-		// 			"MinValue": null,
-		// 			"MaxValue": null
-		// 		},
-		// 		{
-		// 			"FirstOption": 3,
-		// 			"SecondOption": 255,
-		// 			"MinValue": null,
-		// 			"MaxValue": null
-		// 		},
-		// 		{
-		// 			"FirstOption": 2, //특성
-		// 			"SecondOption": 15,
-		// 			"MinValue": 450,
-		// 			"MaxValue": 500
-		// 		},
-		// 		{
-		// 			"FirstOption": 2,
-		// 			"SecondOption": 16,
-		// 			"MinValue": 450,
-		// 			"MaxValue": 500
-		// 		}
-		// 	],
-		// 	"Sort": "BIDSTART_PRICE",
-		// 	"CategoryCode": 200010, // 장비 코드
-		// 	"ItemTier": 3, // 장비 티어
-		// 	"ItemGrade": "유물", //장비 등급
-		// 	"PageNo": 1, // 거래소 검색 페이지 10개씩나옴
-		// 	"SortCondition": "ASC" // 정렬 순서
-		// }
+		}).catch((err) => {
+			console.log(err);
+		})
 
-		// axios.post("https://developer-lostark.game.onstove.com/auctions/items", data, config).then((res) => {
-		// 	console.log(res);
-		// }).catch((err) => {
-		// 	console.log(err);
-		// })
+		const data = {
+			"ItemLevelMin": null, // 아이템 최소렙
+			"ItemLevelMax": null, // 아이템 최대렙
+			"ItemGradeQuality": null, // 아이템 품질
+			"SkillOptions": [ //장비 트포고독한 기사
+				{
+					"FirstOption": null,
+					"SecondOption": null,
+					"MinValue": null,
+					"MaxValue": null
+				}
+			],
+			"EtcOptions": [ // 악세 스킬 및 특성
+				{
+					"FirstOption": null, //각인 
+					"SecondOption": null, // 원한
+					"MinValue": null,
+					"MaxValue": null
+				},
+				{
+					"FirstOption": null,
+					"SecondOption": null,
+					"MinValue": null,
+					"MaxValue": null
+				},
+				{
+					"FirstOption": null, //특성
+					"SecondOption": null,
+					"MinValue": null,
+					"MaxValue": null
+				},
+				{
+					"FirstOption": null,
+					"SecondOption": null,
+					"MinValue": null,
+					"MaxValue": null
+				}
+			],
+			"Sort": "BuyPrice",
+			"CategoryCode": 200000, // 장비 코드(악세)
+			"ItemTier": null, // 장비 티어
+			"ItemGrade": null, //장비 등급
+			"PageNo": 1, // 거래소 검색 페이지 10개씩나옴
+			"SortCondition": "ASC" // 정렬 순서
+		}
+
+		axios.post("https://developer-lostark.game.onstove.com/auctions/items", data, config).then((res) => {
+			console.log(res);
+		}).catch((err) => {
+			console.log(err);
+		})
 	}, [])
-
 	return (
 		<div className="App">
-			<input type="text" name="맞출각인_1" placeholder="맞출 각인" onChange={onChange} />
-			<input type="text" name="맞출각인_2" placeholder="맞출 각인" onChange={onChange} />
+			{/* <input type="text" name="맞출각인_1" placeholder="각인1" onChange={onChange} /> */}
+			<select name="맞출각인_1" id="" >
+				<option value="" label="각인1"></option>
+				{
+					skillList?.map((a, i) => {
+						return <option value={a.Value}>{a.Text}</option>
+
+
+					})
+				}
+			</select>
+			<select name="맞출각인_2" id="" >
+				<option value="" label="각인2"></option>
+				{
+					skillList?.map((a, i) => {
+						return <option value={a.Value}>{a.Text}</option>
+
+
+					})
+				}
+			</select>
+			<select name="맞출각인_3" id="" >
+				<option value="" label="각인3"></option>
+				{
+					skillList?.map((a, i) => {
+						return <option value={a.Value}>{a.Text}</option>
+
+
+					})
+				}
+			</select>
+			<select name="맞출각인_4" id="" >
+				<option value="" label="각인4"></option>
+				{
+					skillList?.map((a, i) => {
+						return <option value={a.Value}>{a.Text}</option>
+
+
+					})
+				}
+			</select>
+			<select name="맞출각인_5" id="" >
+				<option value="" label="각인5"></option>
+				{
+					skillList?.map((a, i) => {
+						return <option value={a.Value}>{a.Text}</option>
+
+
+					})
+				}
+			</select>
+			{/* <input type="text" name="맞출각인_2" placeholder="맞출 각인" onChange={onChange} />
 			<input type="text" name="맞출각인_3" placeholder="맞출 각인" onChange={onChange} />
 			<input type="text" name="맞출각인_4" placeholder="맞출 각인" onChange={onChange} />
-			<input type="text" name="맞출각인_5" placeholder="맞출 각인" onChange={onChange} />
+			<input type="text" name="맞출각인_5" placeholder="맞출 각인" onChange={onChange} /> */}
 			<br />
 			<input type="text" name="맞출각인레벨_1" placeholder="맞출 각인 레벨" onChange={onChange} />
 			<input type="text" name="맞출각인레벨_2" placeholder="맞출 각인 레벨" onChange={onChange} />

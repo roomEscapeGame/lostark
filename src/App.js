@@ -67,6 +67,12 @@ function App() {
 		저장필요각인레벨([...계산된각인]);
 	}
 
+	useEffect(() => {
+		console.log(내가맞출각인);
+		console.log(내각인);
+		console.log(필요각인레벨);
+	}, [필요각인레벨])
+
 	const onChange = (e) => {
 		const name = e.target.name;
 		const value = e.target.value;
@@ -137,9 +143,6 @@ function App() {
 	}
 
 
-	console.log(내가맞출각인);
-	console.log(내각인);
-	console.log(필요각인레벨);
 	useEffect(() => {
 		// const config = {
 		// 	headers: {

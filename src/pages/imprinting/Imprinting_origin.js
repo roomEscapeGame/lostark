@@ -372,7 +372,7 @@ function Imprinting() {
 
     // console.log(accessories);
 
-    const test = async () => {
+    const test = () => {
         const config = {
             headers: {
                 'Accept': 'application/json',
@@ -426,22 +426,34 @@ function Imprinting() {
             "PageNo": 1, // 거래소 검색 페이지 10개씩나옴
             "SortCondition": "ASC" // 정렬 순서
         }
+
         const 각인리스트 = [240, 242, 243];
         const Acc리스트 = [200010, 200020, 200030];
         const 리스트 = [];
 
-        const dataList = () => {
-            return new Promise(function (resolve, reject) {
-                for (let i = 0; i < 각인리스트.length; i++) {
-                    for (let j = i + 1; j < 각인리스트.length; j++) {
-                        // console.log(`[${각인리스트[i]}, ${각인리스트[j]}]`);
-                        data.EtcOptions[0].SecondOption = 각인리스트[i];
-                        data.EtcOptions[1].SecondOption = 각인리스트[j];
-                        Acc리스트.forEach(el => {
-                            data.CategoryCode = el;
+        for (let i = 0; i < 각인리스트.length; i++) {
+            for (let j = i + 1; j < 각인리스트.length; j++) {
+                // console.log(`[${각인리스트[i]}, ${각인리스트[j]}]`);
+                data.EtcOptions[0].SecondOption = 각인리스트[i];
+                data.EtcOptions[1].SecondOption = 각인리스트[j];
+                Acc리스트.forEach(el => {
+                    data.CategoryCode = el;
+                    axios.post("https://developer-lostark.game.onstove.com/auctions/items", data, config).then((res) => {
+                        // console.log(data.EtcOptions);
+                        // console.log(res.data.Items);
+
+                        if (res.data.Items) {
+                            res.data.Items.forEach(el => {
+                                // console.log(el);
+                                리스트.push(el);
+                            });
+                        }
+
+                        for (let i = 2; i < Math.ceil(res.data.TotalCount / 10) + 1; i++) {
+
+                            data.PageNo = i;
+
                             axios.post("https://developer-lostark.game.onstove.com/auctions/items", data, config).then((res) => {
-                                // console.log(data.EtcOptions);
-                                // console.log(res.data.Items);
 
                                 if (res.data.Items) {
                                     res.data.Items.forEach(el => {
@@ -450,124 +462,39 @@ function Imprinting() {
                                     });
                                 }
 
-                                for (let i = 2; i < Math.ceil(res.data.TotalCount / 10) + 1; i++) {
-
-                                    data.PageNo = i;
-
-                                    axios.post("https://developer-lostark.game.onstove.com/auctions/items", data, config).then((res) => {
-
-                                        if (res.data.Items) {
-                                            res.data.Items.forEach(el => {
-                                                // console.log(el);
-                                                리스트.push(el);
-                                            });
-                                        }
-
-                                    }).catch((err) => {
-                                        console.log(err);
-                                    })
-
-
-                                }
-
-
-                                리스트.sort(function (a, b) {
-                                    if (a.AuctionInfo.BuyPrice > b.AuctionInfo.BuyPrice) return 1;
-                                    if (a.AuctionInfo.BuyPrice === b.AuctionInfo.BuyPrice) return 0;
-                                    if (a.AuctionInfo.BuyPrice < b.AuctionInfo.BuyPrice) return -1;
-                                });
-                                console.log(리스트);
                             }).catch((err) => {
                                 console.log(err);
                             })
+
+
+                            if (res.data.Items) {
+                                res.data.Items.forEach(el => {
+                                    리스트.push(el);
+                                });
+                            }
+                        }
+
+
+                        리스트.sort(function (a, b) {
+                            if (a.AuctionInfo.BuyPrice > b.AuctionInfo.BuyPrice) return 1;
+                            if (a.AuctionInfo.BuyPrice === b.AuctionInfo.BuyPrice) return 0;
+                            if (a.AuctionInfo.BuyPrice < b.AuctionInfo.BuyPrice) return -1;
                         });
+                        console.log(리스트);
+                    }).catch((err) => {
+                        console.log(err);
+                    })
+                });
 
-                    }
+            }
 
-                }
-
-                resolve(리스트)
-            });
         }
-
-
-        console.log();
-        await dataList();
-
-
     }
 
     useEffect(() => {
         getSkill();
         test();
     }, [])
-
-
-    //https://school.programmers.co.kr/learn/courses/30/lessons/1844
-
-    // function solution(maps) {
-    //     let answer = 0;
-    //     const gameMap = maps.map(i => i.map(j => 0));
-
-    //     //넓이 높이
-    //     const width = maps.length;
-    //     const heigth = maps[0].length;
-
-    //     //왼쪽 오른쪽 아래 위
-    //     const directionX = [-1, 1, 0, 0];
-    //     const directionY = [0, 0, -1, 1];
-
-    //     const queue = [];
-
-    //     //스타트 좌표
-    //     const startX = 0;
-    //     const startY = 0;
-
-    //     //스타트 좌표 셋팅
-    //     queue.push([startX, startY]);
-    //     //카피 게임판 스타트좌표에  기존 게임판 스타트숫자 넣기
-    //     gameMap[startX][startY] = maps[startX][startY];
-
-    //     while (queue.length > 0) {
-    //       //현재 좌표
-    //       const [x, y] = queue.shift();
-
-    //       for (let i = 0; i < 4; i++){
-    //         //(4방향) 다움칸 좌표
-    //         const nextX = x + directionX[i];
-    //         const nextY = y + directionY[i];
-
-    //         //표를 벗어날경우
-    //         if (nextX < 0 || nextY < 0 || nextX >= width || nextY >= heigth) {
-    //           continue;
-    //         }
-
-    //         //갈 수 없는길이라면
-    //         if (maps[nextX][nextY] <= 0) {
-    //           continue;
-    //         }
-
-    //         //이미 방문한곳이고 지금길이 더멀거나 같다면
-    //         if (gameMap[nextX][nextY] > 0 && gameMap[x][y] + maps[nextX][nextY] >= gameMap[nextX][nextY]) {
-    //           continue;
-    //         }
-
-    //         //다음 좌표에 + 1
-    //         gameMap[nextX][nextY] = maps[nextX][nextY] + gameMap[x][y];
-    //         //현재 좌표 갱신
-    //         queue.push([nextX, nextY]);
-    //       }
-
-    //     }
-    //     //도착지점값이 0이라면 -1 그게아니면 이동칸수 표시
-    //     answer = gameMap[width - 1][heigth - 1] === 0 ? -1 : gameMap[width - 1][heigth - 1];
-
-    //     return answer;
-    //   }
-
-
-
-
     return (
         <>
             <Style.Container>
